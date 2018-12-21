@@ -13,7 +13,7 @@ OmniBar.cooldowns = {
 	[49576] = { duration = 25, class = "DEATHKNIGHT", charges = 2 }, -- Death Grip
 	[51052] = { duration = 120, class = "DEATHKNIGHT" }, -- Anti-Magic Zone
 	[61999] = { duration = 600, class = "DEATHKNIGHT" }, -- Raise Ally
-	[77606] = { duration = 25, class = "DEATHKNIGHT" }, -- Dark Simulacrum
+	[77606] = { duration = 20, class = "DEATHKNIGHT" }, -- Dark Simulacrum
 	[212552] = { duration = 60, class = "DEATHKNIGHT" }, -- Wraith Walk
 
 		-- Blood
@@ -39,6 +39,7 @@ OmniBar.cooldowns = {
 		[47568] = { duration = 120, class = "DEATHKNIGHT", specID = { 251 }, charges = 2 }, -- Empower Rune Weapon
 			[207127] = { parent = 47568 }, -- Hungering Rune Weapon
 		[48792] = { duration = 180, class = "DEATHKNIGHT", specID = { 251, 252 } }, -- Icebound Fortitude
+			[287081] = { parent = 48792, duration = 60 },  -- Lichborne (PvP Talent)
 		[51271] = { duration = 45, class = "DEATHKNIGHT", specID = { 251 } }, -- Pillar of Frost
 		[152279] = { duration = 120, class = "DEATHKNIGHT", specID = { 251} }, -- Breath of Sindragosa
 		[196770] = { duration = 20, class = "DEATHKNIGHT", specID = { 251 } }, -- Remorseless Winter
@@ -108,13 +109,11 @@ OmniBar.cooldowns = {
 
 	-- Priest
 
-	[586] = { duration = 30, class = "PRIEST" }, -- Fade
-		[213602] = { parent = 586 }, -- Greater Fade
 	[32375] = { duration = 45, class = "PRIEST" }, -- Mass Dispel
 
 		-- Discipline
 
-		[8122] = { duration = 30, class = "PRIEST", specID = { 256, 257, 258 } }, -- Psychic Scream
+		[8122] = { duration = 30, class = "PRIEST", specID = { 256, 257 } }, -- Psychic Scream
 		[10060] = { duration = 120, class = "PRIEST", specID = { 256, 258 } }, -- Power Infusion
 		[33206] = { duration = 180, class = "PRIEST", specID = { 256 } }, -- Pain Suppression
 		[34433] = { duration = 180, class = "PRIEST", specID = { 256, 258 } }, -- Shadowfiend
@@ -137,15 +136,17 @@ OmniBar.cooldowns = {
 		[196762] = { duration = 30, class = "PRIEST", specID = { 257 } }, -- Inner Focus
 		[197268] = { duration = 60, class = "PRIEST", specID = { 257 } }, -- Ray of Hope
 		[200183] = { duration = 120, class = "PRIEST", specID = { 257 } }, -- Apotheosis
+		[213602] = { duration = 45, class = "PRIEST", specID = {257, 258} }, -- Greater Fade
 		[213610] = { duration = 30, class = "PRIEST", specID = { 257 } }, -- Holy Ward
 		[215769] = { duration = 300, class = "PRIEST", specID = { 257 } }, -- Spirit of Redemption
 
 		-- Shadow
 
+		[8122] = { duration = 60, class = "PRIEST", specID = { 258 } }, -- Psychic Scream
 		[15286] = { duration = 120, class = "PRIEST", specID = { 258 } }, -- Vampiric Embrace
 		[15487] = { duration = 45, class = "PRIEST", specID = { 258 } }, -- Silence
 		[32379] = { duration = 9, class = "PRIEST", specID = { 258 }, charges = 2 }, -- Shadow Word: Death
-		[47585] = { duration = 120, class = "PRIEST", specID = { 258 } }, -- Dispersion
+		[47585] = { duration = 90, class = "PRIEST", specID = { 258 } }, -- Dispersion
 		[64044] = { duration = 45, class = "PRIEST", specID = { 258 } }, -- Psychic Horror
 		[108968] = { duration = 300, class = "PRIEST", specID = { 258 } }, -- Void Shift
 		[193223] = { duration = 240, class = "PRIEST", specID = { 258 } }, -- Surrender to Madness
@@ -172,7 +173,7 @@ OmniBar.cooldowns = {
 		-- Holy
 
 		[498] = { duration = 60, class = "PALADIN", specID = { 65, 66 } }, -- Divine Protection
-		[6940] = { duration = 120, class = "PALADIN", specID = { 65, 66 }, charges = 2 }, -- Blessing of Sacrifice
+		[6940] = { duration = 120, class = "PALADIN", specID = { 65, 66 } }, -- Blessing of Sacrifice
 		[31821] = { duration = 180, class = "PALADIN", specID = { 65 } }, -- Aura Mastery
 		[105809] = { duration = 90, class = "PALADIN", specID = { 65 } }, -- Holy Avenger
 		[114158] = { duration = 60, class = "PALADIN", specID = { 65 } }, -- Light's Hammer
@@ -804,6 +805,14 @@ function OmniBar:AddCustomSpells()
 		end
 		cooldowns[k] = v
 	end
+
+	-- Populate cooldowns with spell names and icons
+	for spellId,_ in pairs(cooldowns) do
+		local name, _, icon = GetSpellInfo(spellId)
+		cooldowns[spellId].icon = icon
+		cooldowns[spellId].name = name
+	end
+
 end
 
 function OmniBar:Initialize(key, name)
@@ -904,12 +913,6 @@ function OmniBar:Refresh(full)
 end
 
 local Masque = LibStub and LibStub("Masque", true)
-
-for spellID,_ in pairs(cooldowns) do
-	local name, _, icon = GetSpellInfo(spellID)
-	cooldowns[spellID].icon = icon
-	cooldowns[spellID].name = name
-end
 
 -- create a lookup table to translate spec names into IDs
 local specNames = {}
