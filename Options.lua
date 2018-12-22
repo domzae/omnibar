@@ -98,7 +98,7 @@ local function GetSpells()
 
 			if spell.class and spell.class == CLASS_SORT_ORDER[i] then
 				local text = GetSpellInfo(spellID) or ""
-				local spellTexture = GetSpellTexture(spellID) or ""
+                              local spellTexture = GetSpellTexture(spellID) or ""
 				if string.len(text) > 25 then
 					text = string.sub(text, 0, 22) .. "..."
 				end
